@@ -5,15 +5,39 @@ from rest_framework import authentication, permissions
 from .serializer import TaskSerializer
 from .models import Task
 from django.shortcuts import get_object_or_404
+from rest_framework.pagination import PageNumberPagination
+from math import ceil
 # Create your views here.
 class TaskViewSetList(APIView):
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
     
     def get(self, request):
-        Tasks = Task.objects.filter(user=self.request.user)
-        serializer = TaskSerializer(Tasks, many=True)
-        return Response(serializer.data)
+        search_query = request.GET.get('search', '')
+        Tasks = Task.objects.filter(
+            user=self.request.user,
+            title__icontains=search_query
+        )
+
+        paginator = PageNumberPagination()
+        paginator.page_size = 10
+        result_page = paginator.paginate_queryset(Tasks,request=request)
+        
+        serializer = TaskSerializer(result_page, many=True)
+        
+        total_items = Tasks.count()
+        page_size = paginator.page_size
+        total_pages = ceil(total_items / page_size)
+        
+        response_data = {
+            "total_pages" : total_pages,
+            "count" : total_items,
+            "next" : paginator.get_next_link(),
+            "previous" : paginator.get_previous_link(),
+            "results" : serializer.data
+        }
+
+        return Response(response_data)
     
     def post(self, request):
         serializer = TaskSerializer(data=request.data)
