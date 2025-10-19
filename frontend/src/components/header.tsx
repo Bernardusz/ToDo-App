@@ -1,29 +1,12 @@
-import { useState } from "react";
-import searchIcon from "../assets/search.png"
+import LogoApp from "../assets/To-Do-App.svg?react"
+import MenuLogo from "../assets/menu.svg?react"
+import hamburgerState from "../context/HamburgerState";
 const Header = () => {
-    const [search, setSearch] = useState<string>("")
+    const {toggleIsOpen} = hamburgerState()
     return(
-        <header className="flex w-screen flex-col border-2 fixed top-0 left-0 p-5 items-center">
-            <div className="justify-between flex flex-col md:flex-row gap-4">
-                <div className="flex flex-row gap-5 h-10 w-[60vw] items-center">
-                    <h1 className="text-2xl font-bold">To Do App</h1>
-                    <div className="flex flex-row items-center gap-2 border-2">
-                        <img className="h-8 w-8 invert-100" src={searchIcon} alt="" />
-                        <input type="text" value={search} 
-                            onChange={event => setSearch(event.target.value)}
-                            placeholder="Search Title"/>
-                    </div>
-                </div>
-                <div className="flex flex-row gap-2 justify-center">
-                    <h3>To Do</h3>
-                    <h3>On Going</h3>
-                    <h3>Review</h3>
-                    <h3>Done</h3>
-                </div>
-            </div>
-            <div className="w-screen">
-                Welcome Grinder ! Time to work !
-            </div>
+        <header className="flex w-screen flex-row border-2 fixed h-20 top-0 left-0 p-7 items-center justify-between">
+            <LogoApp className="max-w-30"/>
+            <MenuLogo onClick={() => toggleIsOpen()}/>
         </header>
     );
 }

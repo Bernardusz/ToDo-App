@@ -7,6 +7,7 @@ from .models import Task
 from django.shortcuts import get_object_or_404
 from rest_framework.pagination import PageNumberPagination
 from math import ceil
+from django.db.models import Q
 # Create your views here.
 class TaskViewSetList(APIView):
     authentication_classes = [authentication.TokenAuthentication]
@@ -14,9 +15,11 @@ class TaskViewSetList(APIView):
     
     def get(self, request):
         search_query = request.GET.get('search', '')
+        status_query = request.GET.get('status', '')
         Tasks = Task.objects.filter(
-            user=self.request.user,
-            title__icontains=search_query
+            Q(user=self.request.user),
+            Q(title__icontains=search_query),
+            Q(is_done = status_query) if status_query else Q()
         )
 
         paginator = PageNumberPagination()

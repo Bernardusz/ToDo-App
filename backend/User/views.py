@@ -17,6 +17,6 @@ class UserCreateView(APIView):
 
 class UserDeleteView(APIView):
     permission_classes = [permissions.IsAuthenticated]
-    def delete(self, request, pk):
+    def delete(self, request):
         request.user.delete()
         return Response(status=204)
