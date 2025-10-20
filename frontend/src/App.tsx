@@ -7,6 +7,7 @@ import LoginPage from './pages/Login'
 import SignUpPage from './pages/Signup'
 import HamburgerMenu from './components/hamburgerMenu'
 import TasksPage from './pages/Tasks'
+import TaskPage from './pages/Task'
 function App() {
   
 
@@ -20,6 +21,7 @@ function App() {
           <Route path='/login' element={<LoginPage/>} />
           <Route path='/signup' element={<SignUpPage/>}/>
           <Route path='/tasks' element={<TasksPage/>}/>
+          <Route path='/tasks/:id' element={<TaskPage/>}/>
         </Route>
         <Route element={<ProtectedRoute/>}>
 

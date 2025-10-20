@@ -3,7 +3,8 @@ import SearchIcon from "../assets/search.svg?react"
 import TaskComponent from "../components/TaskComponent"
 import api from "../middleware/axiosConfig"
 import myToken from "../context/TokenState"
-
+import { useNavigate } from "react-router-dom"
+import { useSearchParams } from "react-router-dom"
 type input = {
     total_pages: number,
     count: number,
@@ -20,7 +21,10 @@ export type task = {
     is_done: "TODO" | "ONGOING" | "REVIEW" | "DONE"
 }
 const TasksPage = () => {
+    const navigate = useNavigate();
     const {accessToken} = myToken();
+    const [searchParams] = useSearchParams()
+    const page = searchParams.get("page")
     const [tasks, setTasks] = useState<input>({
         total_pages: 3,
         count: 23,
@@ -35,7 +39,7 @@ const TasksPage = () => {
     const fetchTask = useCallback(
         async () => {
             try {
-                const response = await api.get("/tasks", {
+                const response = await api.get(`/tasks?page=${page || 1}`, {
                     headers: {Authorization: `Bearer ${accessToken}`}
                 })
                 setTasks(response.data)
@@ -43,11 +47,21 @@ const TasksPage = () => {
             catch (error){
                 console.error("Error:", error)
             }
-        }, [accessToken]);
+        }, [accessToken, page]);
 
     useEffect(() => {
         fetchTask()
     }, [fetchTask])
+
+    useEffect(() => {
+        navigate("/tasks?page=1")
+    },[])
+
+    const handlePageChange = (newPage: number) => {
+        if (newPage >= 1 && newPage <= tasks.total_pages) {
+            navigate(`/tasks?page=${newPage}`);
+        }
+    };
 
     return (
         <div className="w-screen flex flex-col h-screen items-center">
@@ -59,6 +73,39 @@ const TasksPage = () => {
                 {tasks.results.map((task) => (
                     <TaskComponent id={task.id} title={task.title} created_date={task.created_date} is_done={task.is_done}/>
                 ))}
+            </div>
+            <div className="flex gap-2 mt-4 absolute right-8 bottom-8 flex-row">
+                <button 
+                    onClick={() => handlePageChange(1)}
+                    disabled={!tasks.previous}
+                    className="px-3 py-1 border rounded disabled:opacity-50"
+                >
+                    First
+                </button>
+                <button 
+                    onClick={() => handlePageChange(Number(page || 1) - 1)}
+                    disabled={!tasks.previous}
+                    className="px-3 py-1 border rounded disabled:opacity-50"
+                >
+                    Previous
+                </button>
+                <span className="px-3 py-1">
+                    Page {page || 1} of {tasks.total_pages}
+                </span>
+                <button 
+                    onClick={() => handlePageChange(Number(page || 1) + 1)}
+                    disabled={!tasks.next}
+                    className="px-3 py-1 border rounded disabled:opacity-50"
+                >
+                    Next
+                </button>
+                <button 
+                    onClick={() => handlePageChange(tasks.total_pages)}
+                    disabled={!tasks.next}
+                    className="px-3 py-1 border rounded disabled:opacity-50"
+                >
+                    Last
+                </button>
             </div>
         </div>
     )
