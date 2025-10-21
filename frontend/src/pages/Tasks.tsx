@@ -22,7 +22,7 @@ export type task = {
 }
 const TasksPage = () => {
     const navigate = useNavigate();
-    const {accessToken} = myToken();
+    const accessToken = myToken((state) => state.accessToken);
     const [searchParams] = useSearchParams()
     const page = searchParams.get("page")
     const [tasks, setTasks] = useState<input>({
@@ -43,6 +43,7 @@ const TasksPage = () => {
                     headers: {Authorization: `Bearer ${accessToken}`}
                 })
                 setTasks(response.data)
+
             }
             catch (error){
                 console.error("Error:", error)
@@ -50,12 +51,10 @@ const TasksPage = () => {
         }, [accessToken, page]);
 
     useEffect(() => {
-        fetchTask()
-    }, [fetchTask])
+        if (accessToken) fetchTask();
+    }, [fetchTask, accessToken])
 
-    useEffect(() => {
-        navigate("/tasks?page=1")
-    },[])
+
 
     const handlePageChange = (newPage: number) => {
         if (newPage >= 1 && newPage <= tasks.total_pages) {
@@ -71,7 +70,7 @@ const TasksPage = () => {
             </div>
             <div className="pt-5 gap-2 flex flex-col">
                 {tasks.results.map((task) => (
-                    <TaskComponent id={task.id} title={task.title} created_date={task.created_date} is_done={task.is_done}/>
+                    <TaskComponent key={task.id} id={task.id} title={task.title} created_date={task.created_date} is_done={task.is_done}/>
                 ))}
             </div>
             <div className="flex gap-2 mt-4 absolute right-8 bottom-8 flex-row">
@@ -107,6 +106,10 @@ const TasksPage = () => {
                     Last
                 </button>
             </div>
+            <button onClick={() => navigate("/tasks/creation")} 
+            className="absolute bottom-8 left-12 rounded-2xl bg-blue-600 w-12 h-12">
+                +
+            </button>
         </div>
     )
 }

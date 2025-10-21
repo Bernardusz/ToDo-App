@@ -1,11 +1,13 @@
 import { useState } from "react";
 import api from "../middleware/axiosConfig";
 import myToken from "../context/TokenState";
+import { useNavigate } from "react-router-dom";
 const LoginPage = () => {
     const [username, setUsername] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [rememberMe, setRememberMe] = useState<boolean>(false)
-    const {setToken} = myToken();
+    const setToken = myToken((state) => state.setToken);
+    const navigate = useNavigate();
     const handleLogin  = async () => {
         try{
             const response = await api.post("/token/", {username, password});
@@ -14,6 +16,8 @@ const LoginPage = () => {
                     refreshToken: response.data.refresh,
                     state: rememberMe ? "local" : "session"
                 })
+            navigate("/tasks")
+            console.log(response.data.access)
         }
         catch {
             alert("Login failed!");

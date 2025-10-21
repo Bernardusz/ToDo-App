@@ -22,7 +22,7 @@ api.interceptors.response.use(
             originalRequest._retry = true;
             const { refreshToken, state, setToken } = myToken.getState()
             try {
-                const response = await axios.post("http://localhost:8000/api/token/refresh", {refreshToken});
+                const response = await axios.post("http://localhost:8000/api/token/refresh", {refresh: refreshToken});
                 setToken({
                     accessToken: response.data.accessToken,
                     refreshToken: response.data.refreshToken,
@@ -32,7 +32,7 @@ api.interceptors.response.use(
                 return axios(originalRequest);
             }
             catch (_err){
-                window.location.href = "/login"
+                // window.location.href = "/login"
                 return Promise.reject(_err)
             }
         }

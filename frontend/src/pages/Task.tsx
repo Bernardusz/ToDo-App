@@ -4,10 +4,13 @@ import api from "../middleware/axiosConfig";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import myToken from "../context/TokenState";
+import { useNavigate } from "react-router-dom";
+
 const TaskPage = () => {
     const { id } = useParams();
-    const {accessToken} = myToken();
+    const accessToken = myToken((state) => state.accessToken);
     const [status, setStatus] = useState<"TODO" | "ONGOING" | "REVIEW" | "DONE">("TODO");
+    const navigate = useNavigate();
     const [data, setData] = useState<task>({
         id: parseInt(id ?? ""),
         title: "",
@@ -40,8 +43,19 @@ const TaskPage = () => {
             console.error(error)
         }
     }
+    const deleteTask = async () => {
+        try{
+            await api.delete(`/tasks/${id}`, {
+                headers: {Authorization: `Bearer ${accessToken}`}
+            })
+            navigate("/tasks")
+        }
+        catch (error){
+            console.error(error)
+        }
+    }
     useEffect(()=>{
-        fetchData()
+        if (accessToken) fetchData()
     })
     return(
         <div className="w-screen flex flex-col h-screen items-center justify-center">
@@ -73,6 +87,10 @@ const TaskPage = () => {
                         {data.desc}
                     </p>
                 </div>
+            </div>
+            <div>
+                <button onClick={deleteTask}>Delete</button>
+                <button onClick={() => navigate("/tasks/edit/")}>Update</button>
             </div>
         </div>
     );
