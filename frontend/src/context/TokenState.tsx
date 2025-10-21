@@ -37,13 +37,11 @@ const myToken = create<tokenState>()((set) => ({
     initializeToken: () =>{
         let storedAccess = localStorage.getItem("access_token");
         let storedRefresh = localStorage.getItem("refresh_token");
-        let storageState: "local" | "session" = "local";
 
         // 2. If not found in Local Storage, check Session Storage
         if (!storedAccess || !storedRefresh) {
             storedAccess = sessionStorage.getItem("access_token");
             storedRefresh = sessionStorage.getItem("refresh_token");
-            storageState = "session";
         }
         if (storedAccess && storedRefresh){
             set({

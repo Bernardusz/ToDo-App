@@ -2,6 +2,7 @@ import { useState } from "react";
 import api from "../middleware/axiosConfig";
 import myToken from "../context/TokenState";
 import { useNavigate } from "react-router-dom";
+import { waitForInitialized } from "../middleware/axiosConfig";
 const LoginPage = () => {
     const [username, setUsername] = useState<string>("");
     const [password, setPassword] = useState<string>("");
@@ -11,13 +12,16 @@ const LoginPage = () => {
     const handleLogin  = async () => {
         try{
             const response = await api.post("/token/", {username, password});
+            
+            
             setToken({
                     accessToken: response.data.access,
                     refreshToken: response.data.refresh,
                     state: rememberMe ? "local" : "session"
                 })
+
+            await waitForInitialized();
             navigate("/tasks")
-            console.log(response.data.access)
         }
         catch {
             alert("Login failed!");

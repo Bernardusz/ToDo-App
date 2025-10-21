@@ -8,9 +8,11 @@ from django.shortcuts import get_object_or_404
 from rest_framework.pagination import PageNumberPagination
 from math import ceil
 from django.db.models import Q
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
 # Create your views here.
 class TaskViewSetList(APIView):
-    authentication_classes = [authentication.TokenAuthentication]
+    authentication_classes = [JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
     
     def get(self, request):
@@ -51,7 +53,7 @@ class TaskViewSetList(APIView):
 
 class TaskViewSetDetail(APIView):
 
-    authentication_classes = [authentication.TokenAuthentication]
+    authentication_classes = [JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def get_task_object(self, pk):

@@ -15,6 +15,7 @@ const HamburgerMenu = () => {
                 <HamburgerButton text="OnGoing" link="/tasks/?status=ONGOING" />
                 <HamburgerButton text="Review" link="/tasks/?status=REVIEW" />
                 <HamburgerButton text="Done" link="/tasks/?status=DONE" />
+                <HamburgerButton text="Log Out" link="/logout"/>
             </div> : 
             <div>
                 <HamburgerButton text="Login" link="/login" />

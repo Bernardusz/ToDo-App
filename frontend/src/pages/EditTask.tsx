@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import api from "../middleware/axiosConfig";
 import myToken from "../context/TokenState";
 import { useParams } from "react-router-dom";
@@ -18,7 +18,8 @@ const EditTaskPage = () => {
         }
 
     const accessToken = myToken((state) => state.accessToken);
-    const fetchData = async () => {
+    const fetchData = useCallback(
+        async () => {
         try{
             const response = await api.get(`/tasks/${id}`, {
                 headers: {Authorization: `Bearer ${accessToken}`}
@@ -32,7 +33,7 @@ const EditTaskPage = () => {
         catch (error){
             console.error(error)
         }
-    }
+    }, [accessToken, id])
 
     const updateTaskStatus = async ({status}:{status:"TODO" | "ONGOING" | "REVIEW" | "DONE"}) => {
         try {
@@ -63,7 +64,7 @@ const EditTaskPage = () => {
     
     useEffect(() => {
         fetchData()
-    }, [])
+    }, [fetchData])
 
     return (
         <div className="h-[80vh] w-screen flex items-center justify-center">

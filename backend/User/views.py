@@ -1,9 +1,9 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.contrib.auth.models import User
 from .serializers import UserSerializer
 from rest_framework import permissions
-from django.shortcuts import get_object_or_404
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
 # Create your views here.
 
 class UserCreateView(APIView):
@@ -16,7 +16,7 @@ class UserCreateView(APIView):
         return Response(status=400)
 
 class UserDeleteView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [JWTAuthentication]
     def delete(self, request):
         request.user.delete()
         return Response(status=204)
