@@ -22,9 +22,11 @@ export type task = {
 }
 const TasksPage = () => {
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
     const accessToken = myToken((state) => state.accessToken);
-    const [searchParams] = useSearchParams()
-    const page = searchParams.get("page")
+    const page = searchParams.get("page");
+    const statusTask = searchParams.get("status");
+    const pageTask = searchParams.get("page");
     const [tasks, setTasks] = useState<input>({
         total_pages: 3,
         count: 23,
@@ -40,7 +42,11 @@ const TasksPage = () => {
         async () => {
             try {
                 const response = await api.get(`/tasks?page=${page || 1}`, {
-                    headers: {Authorization: `Bearer ${accessToken}`}
+                    headers: {Authorization: `Bearer ${accessToken}`},
+                    params: {
+                        status: statusTask ?? "",
+                        page: pageTask ?? ""
+                }
                 })
                 setTasks(response.data)
 
@@ -48,7 +54,7 @@ const TasksPage = () => {
             catch (error){
                 console.error("Error:", error)
             }
-        }, [accessToken, page]);
+        }, [statusTask, pageTask ,accessToken, page]);
 
     useEffect(() => {
         if (accessToken) fetchTask();
@@ -73,7 +79,7 @@ const TasksPage = () => {
                     <TaskComponent key={task.id} id={task.id} title={task.title} created_date={task.created_date} is_done={task.is_done}/>
                 ))}
             </div>
-            <div className="flex gap-2 mt-4 absolute right-8 bottom-8 flex-row">
+            <div className="flex gap-2 mt-4 fixed right-8 bottom-8 flex-row">
                 <button 
                     onClick={() => handlePageChange(1)}
                     disabled={!tasks.previous}
@@ -107,7 +113,7 @@ const TasksPage = () => {
                 </button>
             </div>
             <button onClick={() => navigate("/tasks/creation")} 
-            className="absolute bottom-8 left-12 rounded-2xl bg-blue-600 w-12 h-12">
+            className="fixed bottom-8 left-12 rounded-2xl bg-blue-600 w-12 h-12">
                 +
             </button>
         </div>

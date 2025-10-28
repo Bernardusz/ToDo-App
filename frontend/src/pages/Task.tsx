@@ -2,7 +2,7 @@ import type { task } from "./Tasks"
 import StatusButton from "../components/StatusButton";
 import api from "../middleware/axiosConfig";
 import { useCallback, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams} from "react-router-dom";
 import myToken from "../context/TokenState";
 import { useNavigate } from "react-router-dom";
 
@@ -11,6 +11,7 @@ const TaskPage = () => {
     const accessToken = myToken((state) => state.accessToken);
     const [status, setStatus] = useState<"TODO" | "ONGOING" | "REVIEW" | "DONE">("TODO");
     const navigate = useNavigate();
+
     const [data, setData] = useState<task>({
         id: parseInt(id ?? ""),
         title: "",
