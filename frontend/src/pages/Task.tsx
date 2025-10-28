@@ -21,10 +21,11 @@ const TaskPage = () => {
     const fetchData = useCallback(
         async () => {
         try{
-            const response = api.get(`/tasks/${id}/`, {
+            const response = await api.get(`/tasks/${id}/`, {
                 headers: {Authorization: `Bearer ${accessToken}`}
             })
-            setData((await response).data)
+            setData(response.data)
+            setStatus(response.data.is_done)
         }
         catch (error){
             console.error(error)
@@ -37,7 +38,8 @@ const TaskPage = () => {
             },{
                 headers: {Authorization: `Bearer ${accessToken}`}
             })
-            setStatus(status)
+            setStatus(status);
+            fetchData()
         }
         catch (error){
             alert("Error updating!")
@@ -84,8 +86,8 @@ const TaskPage = () => {
                         </div>
                     </div>
                 </div>
-                <div className="border-2 border-blue-500 rounded-2xl h-full">
-                    <p>
+                <div className="border-2 border-blue-500 rounded-2xl h-full ">
+                    <p className="overflow-y-auto max-w-full h-full p-2 break-words max-h-40">
                         {data.desc}
                     </p>
                 </div>
@@ -98,7 +100,7 @@ const TaskPage = () => {
                 <button 
                 className="bg-white w-20 border-2 border-blue-500 rounded-xl
                 hover:scale-110 hover:bg-blue-400 hover:text-white"
-                onClick={() => navigate(`/tasks/edit/${id}`)}>Update</button>
+                onClick={() => navigate(`/tasks/${id}/edit`)}>Update</button>
             </div>
         </div>
     );

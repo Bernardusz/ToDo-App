@@ -1,18 +1,18 @@
 import { useCallback, useEffect, useState } from "react";
 import api from "../middleware/axiosConfig";
 import myToken from "../context/TokenState";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import StatusButton from "../components/StatusButton";
 const EditTaskPage = () => {
     const { id } = useParams();
     const [title, setTitle] = useState<string>("")
     const [createdDate, setCreatedDate] = useState<string>("")
     const [is_done, setIs_done] = useState<"TODO" | "ONGOING" | "REVIEW" | "DONE">("TODO")
-    const [desc, setDesc] = useState<string>("")
+    const [desc, setDesc] = useState<string>("");
+    const navigate = useNavigate()
     const data = {
             id: parseInt(id ?? ""),
             title: title,
-            created_date: createdDate,
             is_done: is_done,
             desc: desc
         }
@@ -37,7 +37,7 @@ const EditTaskPage = () => {
 
     const updateTaskStatus = async ({status}:{status:"TODO" | "ONGOING" | "REVIEW" | "DONE"}) => {
         try {
-            await api.patch(`/tasks/${id}` ,{
+            await api.patch(`/tasks/${id}/` ,{
                 is_done: status
             },{
                 headers: {Authorization: `Bearer ${accessToken}`}
@@ -52,7 +52,7 @@ const EditTaskPage = () => {
 
     const putTask = async () => {
         try {
-            await api.put(`/tasks/${id}`, data, {
+            await api.put(`/tasks/${id}/`, data, {
                 headers: {Authorization: `Bearer ${accessToken}`}
             })
         }
@@ -78,11 +78,15 @@ const EditTaskPage = () => {
                     <div className="flex flex-col gap-2">
                         <h3 className="font-[BBH_Sans_Hegarty]">Id: {id}</h3> 
                         <h3>{createdDate}</h3>
-                        <div className="flex flex-row">
-                            <StatusButton text="TODO" updateStatus={updateTaskStatus} isStatus={is_done}/>
-                            <StatusButton text="ONGOING" updateStatus={updateTaskStatus} isStatus={is_done}/>
-                            <StatusButton text="REVIEW" updateStatus={updateTaskStatus} isStatus={is_done}/>
-                            <StatusButton text="DONE" updateStatus={updateTaskStatus} isStatus={is_done}/>
+                        <div className="flex flex-col">
+                            <div className="flex flex-row">
+                                <StatusButton text="TODO" updateStatus={updateTaskStatus} isStatus={is_done}/>
+                                <StatusButton text="ONGOING" updateStatus={updateTaskStatus} isStatus={is_done}/>
+                            </div>
+                            <div className="flex flex-row">
+                                <StatusButton text="REVIEW" updateStatus={updateTaskStatus} isStatus={is_done}/>
+                                <StatusButton text="DONE" updateStatus={updateTaskStatus} isStatus={is_done}/>
+                            </div>
                         </div>
                     </div>
                     <textarea value={desc} onChange={event => setDesc(event.target.value)}
@@ -91,7 +95,7 @@ const EditTaskPage = () => {
                         
                     </textarea>
                 </div>
-                <button onClick={() => putTask()}
+                <button onClick={() => {putTask(); navigate(`/tasks/${id}`)}}
                 className="w-full rounded-[0.5rem] h-8 bg-blue-400 text-white">
                     Edit
                 </button>
