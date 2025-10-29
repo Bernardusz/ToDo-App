@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useParams} from "react-router-dom";
 import myToken from "../context/TokenState";
 import { useNavigate } from "react-router-dom";
+import ArrowLeft from "../assets/Arrow left.svg?react"
 
 const TaskPage = () => {
     const { id } = useParams();
@@ -63,6 +64,10 @@ const TaskPage = () => {
     }, [accessToken, fetchData])
     return(
         <div className="w-screen flex flex-col h-screen gap-2 items-center justify-center">
+            <div className="fixed top-40 left-20 flex flex-row gap-2" onClick={() =>navigate(-1)}>
+                <ArrowLeft />
+                <h1 className="font-[BBH_Sans_Hegarty] text-2xl text-blue-400">Back</h1>
+            </div>
             <div className="bg-white w-[80vw] p-10 gap-5 rounded-2xl border-blue-500 border-2 h-100 flex flex-col lg:flex-col">
                 <div className="flex flex-col gap-3">
                     <div>

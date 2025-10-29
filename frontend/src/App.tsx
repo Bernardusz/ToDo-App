@@ -13,11 +13,35 @@ import EditTaskPage from './pages/EditTask'
 import myToken from './context/TokenState'
 import { useEffect } from 'react'
 import LoggingOut from './pages/logOut'
+import hamburgerState from './context/HamburgerState'
 function App() {
   const initializeToken = myToken((state) => state.initializeToken);
+  const setToggle = hamburgerState((state) => state.toggleIsOpen);
+
   useEffect(() =>{
     initializeToken();
   }, [initializeToken]);
+
+  // Close hamburger on any click except when clicking inside
+  // the hamburger menu itself or the menu icon in the header.
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (!target) return;
+
+      // Adjust these selectors to match your markup:
+      // .hamburger-menu -> wrapper for <HamburgerMenu />
+      // .menu-icon -> the icon inside <Header /> that toggles the menu
+      if (target.closest('#hamburgerMenu')) return;
+      if (target.closest('#hamburgerButton')) return;
+
+      setToggle(false);
+    };
+
+    document.addEventListener('click', handler);
+    return () => document.removeEventListener('click', handler);
+  }, [setToggle]);
+
   return (
     <Router>
       <Header/>

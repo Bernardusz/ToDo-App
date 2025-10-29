@@ -8,7 +8,7 @@ const HamburgerMenu = () => {
     const { accessToken } = myToken();
     return (
         <div className={`border-blue-300 w-screen overflow-hidden transition duration-500 ease-in-out
-                        ${isOpen ? "h-fit" : "h-0"} mt-20`}>
+                        ${isOpen ? "h-fit" : "h-0"} mt-20`} id="hamburgerMenu">
             {accessToken ? 
             <div>
                 <HamburgerButton text="ToDo" link="/tasks/?status=TODO"/>

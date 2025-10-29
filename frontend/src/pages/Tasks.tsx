@@ -27,6 +27,8 @@ const TasksPage = () => {
     const page = searchParams.get("page");
     const statusTask = searchParams.get("status");
     const pageTask = searchParams.get("page");
+    const searchTask = searchParams.get("search");
+    const [searchValue, setSearchValue] = useState<string>("");
     const [tasks, setTasks] = useState<input>({
         total_pages: 3,
         count: 23,
@@ -45,7 +47,8 @@ const TasksPage = () => {
                     headers: {Authorization: `Bearer ${accessToken}`},
                     params: {
                         status: statusTask ?? "",
-                        page: pageTask ?? ""
+                        page: pageTask ?? "",
+                        search: searchTask ?? ""
                 }
                 })
                 setTasks(response.data)
@@ -54,7 +57,7 @@ const TasksPage = () => {
             catch (error){
                 console.error("Error:", error)
             }
-        }, [statusTask, pageTask ,accessToken, page]);
+        }, [statusTask, pageTask ,accessToken, page, searchTask]);
 
     useEffect(() => {
         if (accessToken) fetchTask();
@@ -64,15 +67,17 @@ const TasksPage = () => {
 
     const handlePageChange = (newPage: number) => {
         if (newPage >= 1 && newPage <= tasks.total_pages) {
-            navigate(`/tasks?page=${newPage}`);
+            const currentStatus = statusTask;
+            const currentSearch = searchValue;
+            navigate(`/tasks?page=${newPage}&status=${currentStatus || ""}&search=${currentSearch || ""}`);
         }
     };
 
     return (
         <div className="w-screen flex flex-col h-screen items-center">
             <div className="flex flex-row gap-1 mt-10">
-                <SearchIcon className="text-blue-400"/>
-                <input type="text" className="ml-2 border-2 w-60" placeholder="Search..." />
+                <SearchIcon className="text-blue-400" onClick={() => handlePageChange(1)}/>
+                <input type="text" className="ml-2 border-2 w-60" placeholder="Search..." value={searchValue}  onChange={event => setSearchValue(event.target.value)}/>
             </div>
             <div className="pt-5 gap-2 flex flex-col">
                 {tasks.results.map((task) => (
